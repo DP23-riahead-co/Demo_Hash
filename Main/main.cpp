@@ -8,28 +8,34 @@ struct Word
     string word;
     string meaning;
 };
-int countWord(fstream& fi) {
+int countWord(fstream &fi)
+{
     string x, word, y;
     getline(fi, x);
     int count(0);
-    while (fi) {
-        if (x.length() > 1) {
+    while (fi)
+    {
+        if (x.length() > 1)
+        {
             getline(fi, y);
             stringstream ss(y);
             getline(ss, word, ' ');
-            if (y[0] == 'U' && word == "Usage") {
+            if (y[0] == 'U' && word == "Usage")
+            {
                 getline(ss, word, '\n');
                 getline(fi, x);
             }
-            else if (y != "") {
+            else if (y != "")
+            {
                 count++;
             }
         }
-        else {
+        else
+        {
             getline(fi, x);
         }
     }
-    return count+1;
+    return count + 1;
 }
 
 int hashFunc(string s, int sizeTab)
@@ -42,7 +48,7 @@ int hashFunc(string s, int sizeTab)
     }
     return (int)(abs(sum) % sizeTab);
 }
-void insert(string word, string meaning, Word* hashTable, int hashTableSize)
+void insert(string word, string meaning, Word *hashTable, int hashTableSize)
 {
     int index = hashFunc(word, hashTableSize);
     int h = 1;
@@ -54,41 +60,53 @@ void insert(string word, string meaning, Word* hashTable, int hashTableSize)
     hashTable[index].word = word;
     hashTable[index].meaning = meaning;
 }
-void readFile(fstream& fi, Word* hashTable, Word* wordList, int len) {
+void readFile(fstream &fi, Word *hashTable, Word *wordList, int len)
+{
     fi.clear();
     fi.seekg(0);
     string text;
     getline(fi, text);
     int i(0);
     bool isUsage(false);
-    while (fi && i < len) {
-        if (text.length() <= 1 || text[1] == ' ') {
+    while (fi && i < len)
+    {
+        if (text.length() <= 1 || text[1] == ' ')
+        {
             getline(fi, text);
         }
-        if (text.length() > 1) {
+        if (text.length() > 1)
+        {
             int j = 0;
             string word = "";
-            while (text[j] != ' ') {
+            while (text[j] != ' ')
+            {
                 word = word + text[j];
                 j++;
             }
-            if (word == "Usage" && wordList[i - 1].word[0] == 'U') {
+            if (word == "Usage" && wordList[i - 1].word[0] == 'U')
+            {
                 isUsage = true;
             }
-            else {
+            else
+            {
                 wordList[i].word = word;
             }
-            while (text[j] == ' ') {
+            while (text[j] == ' ')
+            {
                 j++;
             }
-            if (isUsage) {
-                while (j < text.length()) {
+            if (isUsage)
+            {
+                while (j < text.length())
+                {
                     wordList[i - 1].meaning = wordList[i - 1].meaning + text[j];
                     j++;
                 }
             }
-            else {
-                while (j < text.length()) {
+            else
+            {
+                while (j < text.length())
+                {
                     wordList[i].meaning = wordList[i].meaning + text[j];
                     j++;
                 }
@@ -99,11 +117,11 @@ void readFile(fstream& fi, Word* hashTable, Word* wordList, int len) {
         }
         isUsage = false;
     };
-
 }
-void updateHashTable(Word*& hashTable, int& hashTableSize, int numWord) {
+void updateHashTable(Word *&hashTable, int &hashTableSize, int numWord)
+{
     int newHashTableSize = hashTableSize + numWord;
-    Word* newHashTable = new Word[newHashTableSize];
+    Word *newHashTable = new Word[newHashTableSize];
     for (int i = 0; i < hashTableSize; i++)
     {
         insert(hashTable[i].word, hashTable[i].meaning, newHashTable, newHashTableSize);
@@ -111,14 +129,16 @@ void updateHashTable(Word*& hashTable, int& hashTableSize, int numWord) {
     hashTableSize = newHashTableSize;
     hashTable = newHashTable;
 }
-void addANewWord(Word* &hashTable, int& hashTableSize) {
+void addANewWord(Word *&hashTable, int &hashTableSize)
+{
     int numWord;
     string word, meaning;
     cout << "Input the number of word you want to add : ";
     cin >> numWord;
     cin.ignore();
     updateHashTable(hashTable, hashTableSize, numWord);
-    for (int i = 0; i < numWord; i++) {
+    for (int i = 0; i < numWord; i++)
+    {
         cout << "Input word : ";
         getline(cin, word);
         cout << endl;
@@ -127,7 +147,7 @@ void addANewWord(Word* &hashTable, int& hashTableSize) {
         insert(word, meaning, hashTable, hashTableSize);
     }
 }
-void search(string word, Word* hashTable, int hashTableSize)
+void search(string word, Word *hashTable, int hashTableSize)
 {
     //Compute the index using the Hash Function
     int index = hashFunc(word, hashTableSize);
@@ -147,7 +167,8 @@ void search(string word, Word* hashTable, int hashTableSize)
     else
         cout << word << " is not found!" << endl;
 }
-void deleteWord(string word, Word* hashTable, int hashTableSize) {
+void deleteWord(string word, Word *hashTable, int hashTableSize)
+{
     int index = hashFunc(word, hashTableSize);
     //Search for an unused slot and if the index will exceed the hashTableSize roll back
     int h = 1;
@@ -166,7 +187,8 @@ void deleteWord(string word, Word* hashTable, int hashTableSize) {
     else
         cout << word << " is not found!" << endl;
 }
-void editMeanning(string word, Word* hashTable, int hashTableSize) {
+void editMeanning(string word, Word *hashTable, int hashTableSize)
+{
     int index = hashFunc(word, hashTableSize);
     //Search for an unused slot and if the index will exceed the hashTableSize roll back
     int h = 1;
@@ -191,11 +213,11 @@ int main()
     fstream fi;
     string word, meaning;
     fi.open("Oxford English Dictionary.txt", ios::in);
-   /* fi.open("test.txt", ios::in);*/
+    /* fi.open("test.txt", ios::in);*/
     int hashTableSize = countWord(fi);
     cout << hashTableSize;
-    Word* hashTable = new Word[hashTableSize];
-    Word* wordList = new Word[hashTableSize];
+    Word *hashTable = new Word[hashTableSize];
+    Word *wordList = new Word[hashTableSize];
     readFile(fi, hashTable, wordList, hashTableSize);
     cout << "Input name to search : " << endl;
     getline(cin, word);
